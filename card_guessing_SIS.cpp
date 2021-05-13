@@ -8,8 +8,8 @@
 
 using namespace std;
 
-static const int MAXN = 1000 + 10;
-static const int MAXM = 100000 + 10;
+static const int MAXN = 100 + 10;
+static const int MAXM = 200000 + 10;
 static const int INF = 1<<29;
 
 struct Edge{
@@ -261,24 +261,89 @@ vector<vector<double> > sinkhorn(vector<vector<int> > A){
 	return Q;
 }
 
+void card_guessing(int n, int m, int iterations){
+	int correct = 0;
+
+	vector<int> deck;
+	for(int i = 0; i < n; i++)
+		for(int j = 0; j < m; j++)
+			deck.push_back(i);
+
+	random_device rd;
+	auto rng = default_random_engine { rd() };
+	shuffle(deck.begin(), deck.end(), rng);
+
+	vector<vector<int>> A(n * m, vector<int> (n * m, 1));
+	int index = 0;
+	
+	int options = 1;	
+
+	for(int row = 0; row < n * m; row++){
+		if(deck[row] != index){
+			for(int column = index * m; column < (index + 1) * m; column++){
+				A[row][column] = 0;
+			}
+			continue;
+		}
+		
+		if(index + 1 == options && index + 1 < n) options++;
+
+		correct += 1;
+		if(row == n * m - 1) break;
+
+		int last = 0;
+		for(int i = index * m; i < (index + 1) * m; i++){
+			if(A[row][i] == 1) last = i - index * m + 1;
+			else break;
+		}
+		for(int i = 0; i < n * m; i++){
+			A[row][i] = 0;
+			A[i][index * m + last - 1] = 0;
+		}
+		A[row][index * m + last - 1] = 1;
+
+		row++;
+		vector<double> dist;
+		for(int column = 0; column < options; column++){	
+			int last = 0;
+			for(int i = column * m; i < (column + 1) * m; i++){
+				if(A[row][i] == 1) last = i - column * m + 1;
+				else break;
+			}
+			if(last > 0){
+				vector<vector<int> > AA = A;
+				for(int i = 0; i < n * m; i++){
+					AA[row][i] = 0;
+					AA[i][column * m + last - 1] = 0;
+				}
+				AA[row][column * m + last - 1] = 1;
+				vector<pair<int, int> > current_edges;
+				for(int i = 0; i < n * m; i++)
+					for(int j = 0; j < n * m; j++)
+						if(AA[i][j] == 1)
+							current_edges.push_back(make_pair(i + 1, j + 1));
+
+				vector<vector<double> > Q = sinkhorn(AA);
+				SIS* sis = new SIS();
+				double matches = sis->sample(n * m, current_edges, Q, iterations);
+				delete sis;
+				dist.push_back(matches * (double) last);
+			}
+			else{
+				dist.push_back(0);
+			}
+		}
+		index = max_element(dist.begin(), dist.end()) - dist.begin();
+		row--;
+
+	}
+	cout << correct << endl;
+}
 
 int main(){
-	int n, m, iterations;
-	cin >> n >> m >> iterations;
-	vector<pair<int, int> > current_edges;
-	vector<vector<int>> A(n, vector<int> (n, 0));
-	
-	for(int i = 0; i < m; i++){
-		int u, v;
-		cin >> u >> v;
-		current_edges.push_back(make_pair(u, v));
-		A[u - 1][v - 1] = A[v - 1][u - 1] = 1;
-	}
-	
-	vector<vector<double> > Q = sinkhorn(A);
-	SIS* sis = new SIS();
-	double matches = sis->sample(n, current_edges, Q, iterations);
-	cout << setprecision(4) << fixed << matches << endl;
-
+	int n, m, samples, iterations;
+	cin >> n >> m >> samples >> iterations;
+	for(int i = 0; i < samples; i++)
+		card_guessing(n, m, iterations);
 	return 0;
 }

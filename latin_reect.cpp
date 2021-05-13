@@ -5,11 +5,18 @@
 #include<cstring>
 #include<random>
 #include<future>
+#include<boost/multiprecision/cpp_dec_float.hpp>
 
+
+using namespace boost::multiprecision;
 using namespace std;
 
-static const int MAXN = 1000 + 10;
-static const int MAXM = 100000 + 10;
+
+
+typedef number<cpp_dec_float<800> > cpp_dec_float600;
+
+static const int MAXN = 100 + 10;
+static const int MAXM = 20000 + 10;
 static const int INF = 1<<29;
 
 struct Edge{
@@ -118,7 +125,7 @@ struct SIS{
 		return false;
 	}
 
-	double sample(int N, vector<pair<int, int> > SIS_edges, vector<vector<double> > Q, int iterations){	
+	pair<cpp_dec_float600, vector<int> > sample(int N, vector<pair<int, int> > SIS_edges, vector<vector<double> > Q, int iterations){	
 		Flow* f = new Flow();
 		f->init(2 * N + 2);
 
@@ -135,10 +142,11 @@ struct SIS{
 		f->getflow(0, 2 * N + 1);
 		for(int i = 4 * N; i < f->m; i += 2) matching[(i - 4 * N) / 2] = !f->cap[i];
 		delete f;
+		
+		cpp_dec_float600 B_sum = 0;
+		cpp_dec_float600 B_count = 0;
 
-		double B_sum = 0;
-		double B_count = 0;
-
+		vector<int> sample_matching(N, 0);
 		for(int tt = 0; tt < iterations; tt++){	
 			for(int i = 0; i < MAXN; i++) {
 				adj[i].clear();
@@ -169,7 +177,7 @@ struct SIS{
 			auto rng = default_random_engine { rd1() };
 			shuffle(perm.begin(), perm.end(), rng);
 
-			double B = 1;
+			cpp_dec_float600 B = 1;
 
 			random_device rd2;
 			mt19937 gen(rd2());
@@ -178,7 +186,6 @@ struct SIS{
 				vector<int> cur_edges;
 				vector<double> prob;
 				int u = perm[i];
-
 				for(int j = 0; j < adj[u].size(); j++) if(!edge[adj[u][j]].mark){
 					int v = edge[adj[u][j]].get_other(u);
 
@@ -202,8 +209,9 @@ struct SIS{
 				}
 				int index = cur_edges[distrib(gen)];
 				int v = edge[adj[u][index]].get_other(u);
+				sample_matching[v - N - 1] = u - 1;	
 				fac /= Q[u - 1][v - N - 1];
-				B *= fac;
+				B *= (cpp_dec_float600)fac;
 
 				
 				if(edge[adj[u][index]].v == u){
@@ -232,7 +240,7 @@ struct SIS{
 			B_sum += B;
 			B_count++;
 		}
-		return B_sum / B_count;
+		return make_pair(B_sum / B_count, sample_matching);
 	}
 };
 
@@ -261,24 +269,37 @@ vector<vector<double> > sinkhorn(vector<vector<int> > A){
 	return Q;
 }
 
+void latin_square(int n, int k, int iterations){
+	cpp_dec_float600 count = 1;
+
+	vector<vector<int>> A(n, vector<int> (n, 1));
+
+	for(int row = 0; row < k; row++){
+		
+		vector<pair<int, int> > current_edges;
+		for(int i = 0; i < n; i++)
+			for(int j = 0; j < n; j++)
+				if(A[i][j] == 1)
+					current_edges.push_back(make_pair(i + 1, j + 1));
+
+		vector<vector<double> > Q = sinkhorn(A);
+		SIS* sis = new SIS();
+		pair<cpp_dec_float600, vector<int> > sample_matching = sis->sample(n, current_edges, Q, iterations);
+		delete sis;
+
+		count *= sample_matching.first;
+		
+		for(int i = 0; i < sample_matching.second.size(); i++) A[sample_matching.second[i]][i] = 0;
+	}
+	cout << setprecision(4) << fixed << count << endl;
+}
 
 int main(){
-	int n, m, iterations;
-	cin >> n >> m >> iterations;
-	vector<pair<int, int> > current_edges;
-	vector<vector<int>> A(n, vector<int> (n, 0));
-	
-	for(int i = 0; i < m; i++){
-		int u, v;
-		cin >> u >> v;
-		current_edges.push_back(make_pair(u, v));
-		A[u - 1][v - 1] = A[v - 1][u - 1] = 1;
-	}
-	
-	vector<vector<double> > Q = sinkhorn(A);
-	SIS* sis = new SIS();
-	double matches = sis->sample(n, current_edges, Q, iterations);
-	cout << setprecision(4) << fixed << matches << endl;
-
+	int n, k, samples, iterations;
+	cin >> n >> k >> samples >> iterations;
+	cpp_dec_float600 sum = 0;
+	int count = 0;
+	for(int i = 0; i < samples; i++)
+		latin_square(n, k, iterations);
 	return 0;
 }
