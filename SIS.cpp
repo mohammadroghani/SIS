@@ -261,7 +261,7 @@ vector<vector<double> > sinkhorn(vector<vector<int> > A){
 	return Q;
 }
 
-
+// run the code
 int main(){
 	int n, m, iterations;
 	cin >> n >> m >> iterations;
