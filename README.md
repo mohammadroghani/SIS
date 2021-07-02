@@ -33,7 +33,7 @@ This file contains the general implementation of the sequential importance sampl
 ```
 n m iterations
 ```
-where $n$ is the number of vertices in each part, $m$ is the number of edges, and $iterations$ is the number of iterations used in the sequential importance sampling. The output is equal to the expected number of the perfect matchings that the algorithm finds after this number of iterations.
+where \\(n\\) is the number of vertices in each part, $m$ is the number of edges, and $iterations$ is the number of iterations used in the sequential importance sampling. The output is equal to the expected number of the perfect matchings that the algorithm finds after this number of iterations.
 
 ### card_guessing_SIS.cpp
 This file contains the implementation of the application of the sequential importance sampling in card guessing with yes/no feedback. The input of this file is
