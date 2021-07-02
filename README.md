@@ -54,7 +54,7 @@ This file contains the implementation of the application of the sequential impor
 ```
 n k samples iterations
 ```
-where `n` is the number of columns, `k` is the number of rows such that `k \leq n`, `iterations` is the number of iterations used in the sequential importance sampling, and `samples` is the number of the samples that the algorithm simulates. The output contains $samples$ line where each line shows the number of Latin rectangles in one sample.
+where `n` is the number of columns, `k` is the number of rows, `iterations` is the number of iterations used in the sequential importance sampling, and `samples` is the number of the samples that the algorithm simulates. The output contains $samples$ line where each line shows the number of Latin rectangles in one sample.
 
 
 
