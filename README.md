@@ -33,28 +33,28 @@ This file contains the general implementation of the sequential importance sampl
 ```
 n m iterations
 ```
-where \\(n\\) is the number of vertices in each part, $m$ is the number of edges, and $iterations$ is the number of iterations used in the sequential importance sampling. The output is equal to the expected number of the perfect matchings that the algorithm finds after this number of iterations.
+where `n` is the number of vertices in each part, `m` is the number of edges, and `iterations` is the number of iterations used in the sequential importance sampling. The output is equal to the expected number of the perfect matchings that the algorithm finds after this number of iterations.
 
 ### card_guessing_SIS.cpp
 This file contains the implementation of the application of the sequential importance sampling in card guessing with yes/no feedback. The input of this file is
 ```
 n m samples iterations
 ```
-where $n$ is the number of different types of cards, each type repeated $m$ times, $iterations$ is the number of iterations used in the sequential importance sampling, and $samples$ is the number of the card guessing games that the algorithm simulates. The output contains $samples$ line where each line shows the number of correct guesses on the corresponding game.
+where `n` is the number of different types of cards, each type repeated `m` times, `iterations` is the number of iterations used in the sequential importance sampling, and `samples` is the number of the card guessing games that the algorithm simulates. The output contains $samples$ line where each line shows the number of correct guesses on the corresponding game.
 
 ### card_guessing_greedy.cpp
 This file contains the implementation of greedy strategy in card guessing with yes/no feedback. The input of this file is
 ```
-n m samples iterations
+n m samples
 ```
-where $n$ is the number of different types of cards, each type repeated $m$ times, and $samples$ is the number of the card guessing games that the algorithm simulates. The output contains $samples$ line where each line shows the number of correct guesses on the corresponding game.
+where `n` is the number of different types of cards, each type repeated `m` times, and `samples` is the number of the card guessing games that the algorithm simulates. The output contains $samples$ line where each line shows the number of correct guesses on the corresponding game.
 
 ### latin_rect.cpp
 This file contains the implementation of the application of the sequential importance sampling in counting Latin rectangles. The input of this file is
 ```
 n k samples iterations
 ```
-where $n$ is the number of columns, $k$ is the number of rows such that $k \leq n$, $iterations$ is the number of iterations used in the sequential importance sampling, and $samples$ is the number of the samples that the algorithm simulates. The output contains $samples$ line where each line shows the number of Latin rectangles in one sample.
+where `n` is the number of columns, `k` is the number of rows such that `k \leq n`, `iterations` is the number of iterations used in the sequential importance sampling, and `samples` is the number of the samples that the algorithm simulates. The output contains $samples$ line where each line shows the number of Latin rectangles in one sample.
 
 
 
