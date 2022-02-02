@@ -58,5 +58,5 @@ where `n` is the number of columns, `k` is the number of rows, `iterations` is t
 
 
 
-## Required citation:
+## Citation:
 Alimohammadi, Y., Diaconis, P., Roghani, M., & Saberi, A. (2021). Sequential importance sampling for estimating expectations over the space of perfect matchings. arXiv preprint arXiv:2107.00850.
